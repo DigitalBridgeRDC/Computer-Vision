@@ -1,4 +1,4 @@
-haar cascade classifiers: https://github.com/kipr/opencv/blob/master/data/haarcascades/haarcascade_eye.xml
+haar cascade classifiers: https://github.com/kipr/opencv/tree/master/data/haarcascades
 
 eyes: https://raw.githubusercontent.com/kipr/opencv/master/data/haarcascades/haarcascade_eye.xml
 
