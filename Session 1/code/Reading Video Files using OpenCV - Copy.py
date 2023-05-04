@@ -33,7 +33,7 @@ while cap.isOpened():
         break
     
     # Using cv2.putText() method
-    frame = cv2.putText(frame, 'On peut meme mettre du text sur la video', org, font, 
+    frame = cv2.putText(frame, 'On peut meme mettre du texte sur la video', org, font, 
                    fontScale, color, thickness, cv2.LINE_AA)
 
     # Display the frame
