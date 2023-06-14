@@ -1,0 +1,69 @@
+import cv2
+import mediapipe as mp
+import numpy as np
+
+# Load the MediaPipe face detection model
+mp_face_detection = mp.solutions.face_detection
+
+# Load the MediaPipe face landmark model
+mp_face_mesh = mp.solutions.face_mesh
+
+# Load the MediaPipe face recognition model
+mp_face_recognition = mp.solutions.face_recognition
+
+# Initialize the Face Detection module
+face_detection = mp_face_detection.FaceDetection(min_detection_confidence=0.5)
+
+# Initialize the Face Mesh module
+face_mesh = mp_face_mesh.FaceMesh()
+
+# Initialize the Face Recognition module
+face_recognition = mp_face_recognition.FaceRecognition()
+
+# Load the known face descriptors and their names
+known_descriptors = []
+known_names = []
+known_images = ['person1.jpg', 'person2.jpg', 'person3.jpg']
+for image_file in known_images:
+    image = cv2.imread(image_file)
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    # Detect the face and extract its landmarks and descriptor
+    results = face_mesh.process(image_rgb)
+    landmarks = np.array([[p.x, p.y, p.z] for p in results.multi_face_landmarks[0].landmark]).flatten()
+    descriptor = face_recognition.compute_face_descriptor(image_rgb, landmarks)
+
+    known_descriptors.append(descriptor)
+    known_names.append(image_file.split('.')[0])
+
+# Read the input image
+img = cv2.imread('input.jpg')
+img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+# Detect faces in the input image
+results = face_detection.process(img_rgb)
+
+# Loop over the detected faces and perform recognition
+if results.detections:
+    for detection in results.detections:
+        bbox = detection.location_data.relative_bounding_box
+        h, w, c = img.shape
+        bbox_xmin = int(bbox.xmin * w)
+        bbox_ymin = int(bbox.ymin * h)
+        bbox_width = int(bbox.width * w)
+        bbox_height = int(bbox.height * h)
+
+        # Extract the face landmarks and descriptor
+        face_img = img[bbox_ymin:bbox_ymin+bbox_height, bbox_xmin:bbox_xmin+bbox_width]
+        face_img_rgb = cv2.cvtColor(face_img, cv2.COLOR_BGR2RGB)
+        face_results = face_mesh.process(face_img_rgb)
+        face_landmarks = np.array([[p.x, p.y, p.z] for p in face_results.multi_face_landmarks[0].landmark]).flatten()
+        face_descriptor = face_recognition.compute_face_descriptor(face_img_rgb, face_landmarks)
+
+        # Compare the face descriptor to the known face descriptors and find the best match
+        distances = face_recognition.face_distance(known_descriptors, face_descriptor)
+        best_match_index = np.argmin(distances)
+
+        # Draw a label with the name of the person who matches the best
+        cv2.rectangle(img, (bbox_xmin, bbox_ymin), (bbox_xmin + bbox_width, bbox_ymin + bbox_height), (0, 255, 0), 2)
+        cv2.putText(img, known_names[best_match_index], (bbox_xmin, bbox_ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
