@@ -1,2 +1,2 @@
 # Computer-Vision
-Ce répertoires contient les programmes que nous utiliserons pour les workshop sur la vision par ordinateur (computer vision).
+Ce répertoire contient les programmes que nous utiliserons pour les workshops sur la vision par ordinateur (computer vision).
