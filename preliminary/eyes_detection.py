@@ -12,7 +12,7 @@ face_cascade= cv.CascadeClassifier('haarcascade_frontalface_default.xml')
 eye_cascade= cv.CascadeClassifier('haarcascade_eye.xml')
 
 # charger les images
-img= cv.imread('obama.jpg')
+img= cv.imread('avatar_2.png')
 gray= cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
 # Exécution de la détection de visage
@@ -28,7 +28,7 @@ for face in faces:
     
 #Exécution de la détection de visage
 # detection de l image (image, parametre d'echelle, nbre minmum des voisins)
-eyes= eye_cascade.detectMultiScale(img, 1.1, 3)
+eyes= eye_cascade.detectMultiScale(img, 1.35, 1)
 for eye in eyes:
     ex, ey, ew, eh= eye
     
